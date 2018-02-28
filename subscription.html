@@ -1,0 +1,51 @@
+
+<html>
+  <head>
+    <title>Websockets Test</title>
+  </head>
+  <body>
+    <script>
+      const socket = new WebSocket(
+        'wss://eu1.prisma.sh/public-scarlettaker-482/subscriptions-example/dev','graphql-ws'
+      )
+      socket.addEventListener('open', event => {
+        console.log('open')
+        console.log(event)
+        socket.send(JSON.stringify({
+          type: 'connection_init',
+          payload: {
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJkYXRhIjp7InNlcnZpY2UiOiJzdWJzY3JpcHRpb25zLWV4YW1wbGVAZGV2Iiwicm9sZXMiOlsiYWRtaW4iXX0sImlhdCI6MTUxOTgyMTIyNywiZXhwIjoxNTIwNDI2MDI3fQ.YFMONKX-lc6F7fx7FeThJc9r2I99By4OjRF3nVQb_7M`
+          }
+        }))
+      })
+      const QUERY = `
+        subscription {
+          publications {
+            node {
+              id
+            }
+          }
+        }
+      `
+      socket.addEventListener('message', event => {
+        console.log('message')
+        console.log(event)
+        const data = JSON.parse(event.data)
+        if (data.type === 'connection_ack') {
+          const request = {
+            type: 'start',
+            id: '0',
+            payload: {
+              query: QUERY
+            }
+          }
+          socket.send(JSON.stringify(request))
+        }
+      })
+      socket.addEventListener('error', event => {
+        console.log('error')
+        console.log(event)
+      })
+    </script>
+  </body>
+</html>
