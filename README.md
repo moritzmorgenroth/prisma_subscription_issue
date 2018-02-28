@@ -2,6 +2,36 @@
 
 This example demonstrates how to implement **event-based realtime updates with GraphQL subscriptions** when building a GraphQL server based on Prisma & [`graphql-yoga`](https://github.com/graphcool/graphql-yoga).
 
+## Reproduction instructions:
+
+open playground:
+```
+yarn dev
+```
+run subscription in one tab:
+```
+subscription {
+  publications {
+    node {
+      id
+      title
+    }
+  }
+}
+```
+in another tab, create some new posts:
+```
+mutation {
+  writePost(
+    title: "Secret Post"
+  ) {
+    id
+  }
+}
+```
+the subscription int tab 1 does not fire.
+
+
 ## Get started
 
 > **Note**: `prisma` is listed as a _development dependency_ and _script_ in this project's [`package.json`](./package.json). This means you can invoke the Prisma CLI without having it globally installed on your machine (by prefixing it with `yarn`), e.g. `yarn prisma deploy` or `yarn prisma playground`. If you have the Prisma CLI installed globally (which you can do with `npm install -g prisma`), you can omit the `yarn` prefix.
